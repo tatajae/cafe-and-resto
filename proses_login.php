@@ -24,7 +24,7 @@ if ($data) {
     } elseif ($role == 'pemilik') {
         header("Location: pemilik/index.php");
     } else {
-        header("Location: index.php");
+        header("Location: user/index.php");
     }
     exit;
 
