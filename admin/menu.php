@@ -51,6 +51,13 @@ else if($menu=="tambah_kategori"){
   include "tambah_kategori.php";
 }
 
+else if($menu=="pesanan"){
+  include "pesanan.php";
+}
+
+else if($menu=="pembayaran"){
+  include "pembayaran.php";
+}
 
 else{
   include "home.php";

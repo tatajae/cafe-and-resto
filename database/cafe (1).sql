@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 14, 2026 at 04:38 AM
+-- Generation Time: Apr 26, 2026 at 04:23 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -40,6 +40,34 @@ INSERT INTO `kategori` (`id_kategori`, `nama_kategori`) VALUES
 (1, 'Makanan'),
 (2, 'Minuman'),
 (3, 'Dessert');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pembayaran`
+--
+
+CREATE TABLE `pembayaran` (
+  `id` int(11) NOT NULL,
+  `nama` varchar(100) DEFAULT NULL,
+  `bukti` varchar(255) DEFAULT NULL,
+  `status` varchar(50) DEFAULT NULL,
+  `tanggal` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pesanan`
+--
+
+CREATE TABLE `pesanan` (
+  `id` int(11) NOT NULL,
+  `nama_pemesan` varchar(100) DEFAULT NULL,
+  `total` int(11) DEFAULT NULL,
+  `status` varchar(50) DEFAULT NULL,
+  `tanggal` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -113,6 +141,18 @@ ALTER TABLE `kategori`
   ADD PRIMARY KEY (`id_kategori`);
 
 --
+-- Indexes for table `pembayaran`
+--
+ALTER TABLE `pembayaran`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `pesanan`
+--
+ALTER TABLE `pesanan`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `produk`
 --
 ALTER TABLE `produk`
@@ -139,6 +179,18 @@ ALTER TABLE `users`
 --
 ALTER TABLE `kategori`
   MODIFY `id_kategori` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `pembayaran`
+--
+ALTER TABLE `pembayaran`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `pesanan`
+--
+ALTER TABLE `pesanan`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `produk`
