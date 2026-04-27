@@ -1,5 +1,5 @@
 <?php
-$page = isset($_GET['page']) ? $_GET['page'] : 'home';
+$page = $_GET['page'] ?? 'home';
 
 switch ($page) {
 
@@ -11,8 +11,28 @@ switch ($page) {
         include "menu_produk.php";
         break;
 
+    case 'keranjang':
+        include "keranjang.php";
+        break;
+
+    case 'checkout':
+        include "checkout.php";
+        break;
+
     case 'pesanan':
         include "pesanan.php";
+        break;
+
+    case 'reservasi':
+        include "reservasi.php";
+        break;
+
+    case 'profil':
+        include "profil.php";
+        break;
+
+    case 'detail_pesanan':
+        include "detail_pesanan.php";
         break;
 
     default:

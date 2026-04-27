@@ -52,7 +52,7 @@ body{
 <ul class="navbar-nav ms-auto">
 
 <li class="nav-item">
-<a class="nav-link" href="dashboard.php?page=home">Home</a>
+<a class="nav-link" href="dashboard.php?page=home">Dashboard</a>
 </li>
 
 <li class="nav-item">
@@ -60,7 +60,19 @@ body{
 </li>
 
 <li class="nav-item">
-<a class="nav-link" href="dashboard.php?page=pesanan">Pesanan Saya</a>
+<a class="nav-link" href="dashboard.php?page=keranjang">Keranjang</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link" href="dashboard.php?page=pesanan">Pesanan</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link" href="dashboard.php?page=reservasi">Reservasi</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link" href="dashboard.php?page=profil">Profil</a>
 </li>
 
 <li class="nav-item">

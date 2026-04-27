@@ -23,8 +23,10 @@ if ($data) {
         header("Location: admin/index.php");
     } elseif ($role == 'pemilik') {
         header("Location: pemilik/index.php");
+    } elseif ($role == 'user'){
+        header('Location: user/index.php');
     } else {
-        header("Location: user/index.php");
+        header("Location: index.php");
     }
     exit;
 
