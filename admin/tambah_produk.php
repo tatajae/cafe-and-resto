@@ -10,7 +10,7 @@ $harga=$_POST['harga'];
 $gambar=$_FILES['gambar']['name'];
 $tmp=$_FILES['gambar']['tmp_name'];
 
-move_uploaded_file($tmp,"gambar/".$gambar);
+move_uploaded_file($tmp,"../gambar/".$gambar);
 
 mysqli_query($conn,"INSERT INTO produk VALUES(NULL,'$nama','$kategori','$harga','$gambar')");
 

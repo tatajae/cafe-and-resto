@@ -9,11 +9,11 @@ if (!isset($_SESSION['id_user'])) {
 }
 
 $id_user = $_SESSION['id_user'];
-$id = $_GET['id'] ?? 0;
+$id_produk = $_GET['id_produk'] ?? 0;
 
 // cek produk sudah ada di keranjang atau belum
 $cek = mysqli_query($conn, "SELECT * FROM keranjang 
-                           WHERE id_user='$id_user' AND id='$id'");
+                           WHERE id_user='$id_user' AND id_produk='$id_produk'");
 
 if(mysqli_num_rows($cek) > 0){
 
