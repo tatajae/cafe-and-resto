@@ -1,27 +1,42 @@
 <?php
 include "../koneksi.php";
 
-$id_user = $_SESSION['id_user'];
+/* DEBUG (hapus kalau sudah normal) */
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
-if(isset($_POST['tanggal'])){
-
-$tanggal = $_POST['tanggal'];
-$jam = $_POST['jam'];
-$jumlah = $_POST['jumlah'];
-
-// ✅ VALIDASI DI SINI
-if($tanggal < date('Y-m-d')){
-    echo "<script>alert('Tanggal tidak boleh di masa lalu!');</script>";
-} else {
-
-    mysqli_query($conn, "
-    INSERT INTO reservasi (id_user, tanggal, jam, jumlah_orang)
-    VALUES ('$id_user','$tanggal','$jam','$jumlah')
-    ");
-
-    echo "<script>alert('Reservasi berhasil!');</script>";
+/* CEK LOGIN */
+if (!isset($_SESSION['id_user'])) {
+    header("Location: ../login.php");
+    exit;
 }
 
+$id_user = $_SESSION['id_user'];
+
+/* =====================
+   PROSES RESERVASI
+===================== */
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+    $tanggal = $_POST['tanggal'];
+    $jam = $_POST['jam'];
+    $jumlah = $_POST['jumlah'];
+
+    // validasi tanggal
+    if ($tanggal < date('Y-m-d')) {
+
+        echo "<script>alert('Tanggal tidak boleh di masa lalu!');</script>";
+
+    } else {
+
+        mysqli_query($conn, "
+            INSERT INTO reservasi (id_user, tanggal, jam, jumlah_orang, status)
+            VALUES ('$id_user','$tanggal','$jam','$jumlah','menunggu')
+        ") or die(mysqli_error($conn));
+
+        echo "<script>alert('Reservasi berhasil!'); window.location='dashboard.php?page=reservasi';</script>";
+        exit;
+    }
 }
 ?>
 
@@ -45,7 +60,7 @@ if($tanggal < date('Y-m-d')){
 
 <div class="col-md-4 mb-3">
 <label>Jumlah Orang</label>
-<input type="number" name="jumlah" class="form-control" required>
+<input type="number" name="jumlah" class="form-control" required min="1">
 </div>
 
 </div>
@@ -60,13 +75,19 @@ if($tanggal < date('Y-m-d')){
 
 <?php
 $data = mysqli_query($conn, "
-SELECT * FROM reservasi 
-WHERE id_user='$id_user'
-ORDER BY id_reservasi DESC
+    SELECT * FROM reservasi 
+    WHERE id_user='$id_user'
+    ORDER BY id_reservasi DESC
 ");
 ?>
 
-<table class="table mt-3">
+<?php if(mysqli_num_rows($data) == 0){ ?>
+
+<p>Belum ada reservasi.</p>
+
+<?php } else { ?>
+
+<table class="table table-bordered mt-3">
 
 <tr>
 <th>Tanggal</th>
@@ -78,8 +99,8 @@ ORDER BY id_reservasi DESC
 <?php while($d = mysqli_fetch_assoc($data)){ ?>
 
 <tr>
-<td><?= $d['tanggal']; ?></td>
-<td><?= $d['jam']; ?></td>
+<td><?= date('d-m-Y', strtotime($d['tanggal'])); ?></td>
+<td><?= date('H:i', strtotime($d['jam'])); ?></td>
 <td><?= $d['jumlah_orang']; ?> orang</td>
 <td>
 
@@ -99,5 +120,7 @@ ORDER BY id_reservasi DESC
 <?php } ?>
 
 </table>
+
+<?php } ?>
 
 </div>

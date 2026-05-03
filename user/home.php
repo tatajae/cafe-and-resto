@@ -1,12 +1,12 @@
 <?php
-$id = $_SESSION['id'] ?? 0;
+$id = $_SESSION['id_pesanan'] ?? 0;
 
 $total_pesanan = 0;
 
 $q = mysqli_query($conn, "SHOW TABLES LIKE 'pesanan'");
 if(mysqli_num_rows($q) > 0){
 
-    $result = mysqli_query($conn, "SELECT COUNT(*) as total FROM pesanan WHERE id='$id'");
+    $result = mysqli_query($conn, "SELECT COUNT(*) as total FROM pesanan WHERE id_pesanan='$id'");
     $data = mysqli_fetch_assoc($result);
     $total_pesanan = $data['total'] ?? 0;
 }

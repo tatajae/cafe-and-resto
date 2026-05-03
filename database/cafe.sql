@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 03, 2026 at 02:05 PM
+-- Generation Time: May 03, 2026 at 03:00 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -20,6 +20,28 @@ SET time_zone = "+00:00";
 --
 -- Database: `cafe`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `detail_pesanan`
+--
+
+CREATE TABLE `detail_pesanan` (
+  `id_detail` int(11) NOT NULL,
+  `id_pesanan` int(11) NOT NULL,
+  `id_produk` int(11) NOT NULL,
+  `jumlah` int(11) NOT NULL,
+  `harga` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `detail_pesanan`
+--
+
+INSERT INTO `detail_pesanan` (`id_detail`, `id_pesanan`, `id_produk`, `jumlah`, `harga`) VALUES
+(1, 3, 4, 1, 25000),
+(2, 3, 6, 2, 45000);
 
 -- --------------------------------------------------------
 
@@ -56,13 +78,6 @@ CREATE TABLE `keranjang` (
   `tanggal` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `keranjang`
---
-
-INSERT INTO `keranjang` (`id_keranjang`, `id_user`, `id_produk`, `jumlah`, `tanggal`) VALUES
-(1, 3, 0, 4, '2026-05-03 10:21:08');
-
 -- --------------------------------------------------------
 
 --
@@ -84,12 +99,24 @@ CREATE TABLE `pembayaran` (
 --
 
 CREATE TABLE `pesanan` (
-  `id` int(11) NOT NULL,
-  `nama_pemesan` varchar(100) DEFAULT NULL,
-  `total` int(11) DEFAULT NULL,
-  `status` varchar(50) DEFAULT NULL,
-  `tanggal` timestamp NOT NULL DEFAULT current_timestamp()
+  `id_pesanan` int(11) NOT NULL,
+  `id_user` int(11) NOT NULL,
+  `nama_pemesan` varchar(100) NOT NULL,
+  `meja` varchar(10) NOT NULL,
+  `pembayaran` varchar(50) NOT NULL,
+  `tanggal` datetime DEFAULT current_timestamp(),
+  `total` int(11) NOT NULL,
+  `status` enum('pending','diproses','selesai') DEFAULT 'pending'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `pesanan`
+--
+
+INSERT INTO `pesanan` (`id_pesanan`, `id_user`, `nama_pemesan`, `meja`, `pembayaran`, `tanggal`, `total`, `status`) VALUES
+(1, 3, 'tata', '8', 'Cash', '2026-05-03 19:49:36', 115000, 'pending'),
+(2, 3, 'tata', '8', 'Cash', '2026-05-03 19:49:59', 115000, 'pending'),
+(3, 3, 'tata', '8', 'Cash', '2026-05-03 19:53:23', 115000, 'pending');
 
 -- --------------------------------------------------------
 
@@ -126,12 +153,20 @@ INSERT INTO `produk` (`id_produk`, `id_kategori`, `nama_produk`, `harga`, `gamba
 
 CREATE TABLE `reservasi` (
   `id_reservasi` int(11) NOT NULL,
-  `nama` varchar(100) DEFAULT NULL,
-  `tanggal` date DEFAULT NULL,
-  `jam` time DEFAULT NULL,
-  `jumlah_orang` int(11) DEFAULT NULL,
-  `pesan` text DEFAULT NULL
+  `id_user` int(11) NOT NULL,
+  `tanggal` date NOT NULL,
+  `jam` time NOT NULL,
+  `jumlah_orang` int(11) NOT NULL,
+  `status` enum('menunggu','disetujui','ditolak') DEFAULT 'menunggu',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `reservasi`
+--
+
+INSERT INTO `reservasi` (`id_reservasi`, `id_user`, `tanggal`, `jam`, `jumlah_orang`, `status`, `created_at`) VALUES
+(1, 3, '2026-05-07', '08:59:00', 5, 'menunggu', '2026-05-03 12:58:03');
 
 -- --------------------------------------------------------
 
@@ -162,6 +197,12 @@ INSERT INTO `users` (`id_user`, `username`, `nama`, `email`, `password`, `role`)
 --
 
 --
+-- Indexes for table `detail_pesanan`
+--
+ALTER TABLE `detail_pesanan`
+  ADD PRIMARY KEY (`id_detail`);
+
+--
 -- Indexes for table `kategori`
 --
 ALTER TABLE `kategori`
@@ -183,7 +224,7 @@ ALTER TABLE `pembayaran`
 -- Indexes for table `pesanan`
 --
 ALTER TABLE `pesanan`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id_pesanan`);
 
 --
 -- Indexes for table `produk`
@@ -208,6 +249,12 @@ ALTER TABLE `users`
 --
 
 --
+-- AUTO_INCREMENT for table `detail_pesanan`
+--
+ALTER TABLE `detail_pesanan`
+  MODIFY `id_detail` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT for table `kategori`
 --
 ALTER TABLE `kategori`
@@ -217,7 +264,7 @@ ALTER TABLE `kategori`
 -- AUTO_INCREMENT for table `keranjang`
 --
 ALTER TABLE `keranjang`
-  MODIFY `id_keranjang` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_keranjang` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `pembayaran`
@@ -229,7 +276,7 @@ ALTER TABLE `pembayaran`
 -- AUTO_INCREMENT for table `pesanan`
 --
 ALTER TABLE `pesanan`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_pesanan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `produk`
@@ -241,7 +288,7 @@ ALTER TABLE `produk`
 -- AUTO_INCREMENT for table `reservasi`
 --
 ALTER TABLE `reservasi`
-  MODIFY `id_reservasi` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_reservasi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `users`

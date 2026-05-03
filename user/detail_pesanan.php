@@ -1,14 +1,32 @@
 <?php
-$id = $_GET['id'];
+include "../koneksi.php";
+
+/* DEBUG (hapus kalau sudah normal) */
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+/* CEK LOGIN */
+if (!isset($_SESSION['id_user'])) {
+    header("Location: ../login.php");
+    exit;
+}
+
 $id_user = $_SESSION['id_user'];
+$id = $_GET['id'] ?? 0;
 
-// ambil pesanan milik user (biar aman)
+// validasi ID
+if($id == 0){
+    echo "<script>alert('ID tidak valid'); window.location='dashboard.php?page=pesanan';</script>";
+    exit;
+}
+
+// ambil pesanan (aman sesuai user)
 $p = mysqli_fetch_assoc(mysqli_query($conn, "
-SELECT * FROM pesanan 
-WHERE id_pesanan='$id' AND id_user='$id_user'
-"));
+    SELECT * FROM pesanan 
+    WHERE id_pesanan='$id' AND id_user='$id_user'
+")) or die(mysqli_error($conn));
 
-// kalau tidak ada → redirect
+// kalau tidak ada
 if(!$p){
     echo "<script>alert('Data tidak ditemukan'); window.location='dashboard.php?page=pesanan';</script>";
     exit;
@@ -16,10 +34,10 @@ if(!$p){
 
 // ambil detail produk
 $detail = mysqli_query($conn, "
-SELECT d.*, p.nama_produk
-FROM detail_pesanan d
-JOIN produk p ON d.id_produk = p.id_produk
-WHERE d.id_pesanan='$id'
+    SELECT d.*, p.nama_produk
+    FROM detail_pesanan d
+    JOIN produk p ON d.id_produk = p.id_produk
+    WHERE d.id_pesanan='$id'
 ");
 ?>
 
@@ -30,12 +48,12 @@ WHERE d.id_pesanan='$id'
 <div class="row mb-3">
 
 <div class="col-md-6">
-<p><b>Nama:</b> <?= $p['nama']; ?></p>
+<p><b>Nama:</b> <?= $p['nama_pemesan']; ?></p>
 <p><b>Meja:</b> <?= $p['meja']; ?></p>
 </div>
 
 <div class="col-md-6">
-<p><b>Tanggal:</b> <?= $p['tanggal']; ?></p>
+<p><b>Tanggal:</b> <?= date('d-m-Y H:i', strtotime($p['tanggal'])); ?></p>
 <p><b>Pembayaran:</b> <?= $p['pembayaran']; ?></p>
 </div>
 
@@ -72,16 +90,16 @@ $total += $subtotal;
 
 <tr>
 <td><?= $d['nama_produk']; ?></td>
-<td>Rp <?= number_format($d['harga']); ?></td>
+<td>Rp <?= number_format($d['harga'],0,',','.'); ?></td>
 <td><?= $d['jumlah']; ?></td>
-<td>Rp <?= number_format($subtotal); ?></td>
+<td>Rp <?= number_format($subtotal,0,',','.'); ?></td>
 </tr>
 
 <?php } ?>
 
 </table>
 
-<h5 class="text-end">Total: Rp <?= number_format($total); ?></h5>
+<h5 class="text-end">Total: Rp <?= number_format($total,0,',','.'); ?></h5>
 
 <a href="dashboard.php?page=pesanan" class="btn btn-secondary">
 ⬅ Kembali
