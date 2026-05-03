@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 27 Apr 2026 pada 17.04
--- Versi server: 10.4.32-MariaDB
--- Versi PHP: 8.2.12
+-- Generation Time: May 03, 2026 at 02:05 PM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -24,29 +24,7 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `detail_pesanan`
---
-
-CREATE TABLE `detail_pesanan` (
-  `id_detail` int(11) NOT NULL,
-  `id_pesanan` int(11) DEFAULT NULL,
-  `id_produk` int(11) DEFAULT NULL,
-  `jumlah` int(11) DEFAULT NULL,
-  `harga` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data untuk tabel `detail_pesanan`
---
-
-INSERT INTO `detail_pesanan` (`id_detail`, `id_pesanan`, `id_produk`, `jumlah`, `harga`) VALUES
-(1, 3, 1, 1, 15000),
-(2, 3, 4, 1, 25000);
-
--- --------------------------------------------------------
-
---
--- Struktur dari tabel `kategori`
+-- Table structure for table `kategori`
 --
 
 CREATE TABLE `kategori` (
@@ -55,102 +33,110 @@ CREATE TABLE `kategori` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `kategori`
+-- Dumping data for table `kategori`
 --
 
 INSERT INTO `kategori` (`id_kategori`, `nama_kategori`) VALUES
-(1, 'Makanan'),
-(2, 'Minuman'),
-(3, 'Dessert');
+(1, 'coffe'),
+(2, 'Noncoffe'),
+(3, 'Makanan'),
+(4, 'Dessert');
 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `keranjang`
+-- Table structure for table `keranjang`
 --
 
 CREATE TABLE `keranjang` (
   `id_keranjang` int(11) NOT NULL,
   `id_user` int(11) DEFAULT NULL,
   `id_produk` int(11) DEFAULT NULL,
-  `jumlah` int(11) DEFAULT 1
+  `jumlah` int(11) DEFAULT NULL,
+  `tanggal` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `keranjang`
+--
+
+INSERT INTO `keranjang` (`id_keranjang`, `id_user`, `id_produk`, `jumlah`, `tanggal`) VALUES
+(1, 3, 0, 4, '2026-05-03 10:21:08');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pembayaran`
+--
+
+CREATE TABLE `pembayaran` (
+  `id` int(11) NOT NULL,
+  `nama` varchar(100) DEFAULT NULL,
+  `bukti` varchar(255) DEFAULT NULL,
+  `status` varchar(50) DEFAULT NULL,
+  `tanggal` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `pesanan`
+-- Table structure for table `pesanan`
 --
 
 CREATE TABLE `pesanan` (
-  `id_pesanan` int(11) NOT NULL,
-  `id_user` int(11) DEFAULT NULL,
-  `tanggal` date DEFAULT curdate(),
-  `total` int(11) DEFAULT 0,
-  `status` enum('pending','diproses','selesai') DEFAULT 'pending',
-  `nama` varchar(100) DEFAULT NULL,
-  `meja` varchar(50) DEFAULT NULL,
-  `pembayaran` varchar(50) DEFAULT NULL
+  `id` int(11) NOT NULL,
+  `nama_pemesan` varchar(100) DEFAULT NULL,
+  `total` int(11) DEFAULT NULL,
+  `status` varchar(50) DEFAULT NULL,
+  `tanggal` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data untuk tabel `pesanan`
---
-
-INSERT INTO `pesanan` (`id_pesanan`, `id_user`, `tanggal`, `total`, `status`, `nama`, `meja`, `pembayaran`) VALUES
-(1, 1, '2026-04-27', 25000, 'pending', NULL, NULL, NULL),
-(2, 1, '2026-04-27', 50000, 'selesai', NULL, NULL, NULL),
-(3, 3, '2026-04-27', 40000, 'pending', 'ichi', '12', 'Cash');
 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `produk`
+-- Table structure for table `produk`
 --
 
 CREATE TABLE `produk` (
   `id_produk` int(11) NOT NULL,
+  `id_kategori` int(11) NOT NULL,
   `nama_produk` varchar(100) DEFAULT NULL,
-  `kategori` varchar(50) DEFAULT NULL,
   `harga` int(11) DEFAULT NULL,
   `gambar` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `produk`
+-- Dumping data for table `produk`
 --
 
-INSERT INTO `produk` (`id_produk`, `nama_produk`, `kategori`, `harga`, `gambar`) VALUES
-(1, 'Mie Ayam', 'Makanan', 15000, 'Mie Ayam Ratu.jfif'),
-(4, 'Coffe Latte', 'Coffee', 25000, 'coffe latte.jfif');
+INSERT INTO `produk` (`id_produk`, `id_kategori`, `nama_produk`, `harga`, `gambar`) VALUES
+(4, 1, 'Coffe Latte', 25000, 'coffe latte.jfif'),
+(6, 3, 'Sate Taichan', 45000, 'sate taichan.jfif'),
+(7, 3, 'Sate Ayam', 40000, 'sate ayam.jfif'),
+(8, 1, 'Americano', 20000, 'How To Make an Americano - Tastylicious.jfif'),
+(9, 2, 'Matcha', 15000, 'matcha.jfif'),
+(10, 3, 'Bakso', 20000, 'Bakso Kuah.jfif'),
+(11, 3, 'Mie Ayam', 15000, 'Mie Ayam Ratu.jfif');
 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `reservasi`
+-- Table structure for table `reservasi`
 --
 
 CREATE TABLE `reservasi` (
   `id_reservasi` int(11) NOT NULL,
+  `nama` varchar(100) DEFAULT NULL,
   `tanggal` date DEFAULT NULL,
   `jam` time DEFAULT NULL,
   `jumlah_orang` int(11) DEFAULT NULL,
-  `id_user` int(11) DEFAULT NULL,
-  `status` enum('menunggu','disetujui','ditolak') DEFAULT 'menunggu',
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `pesan` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data untuk tabel `reservasi`
---
-
-INSERT INTO `reservasi` (`id_reservasi`, `tanggal`, `jam`, `jumlah_orang`, `id_user`, `status`, `created_at`) VALUES
-(3, '2026-05-12', '20:00:00', 12, 3, 'menunggu', '2026-04-27 14:54:02');
 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `users`
+-- Table structure for table `users`
 --
 
 CREATE TABLE `users` (
@@ -163,7 +149,7 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `users`
+-- Dumping data for table `users`
 --
 
 INSERT INTO `users` (`id_user`, `username`, `nama`, `email`, `password`, `role`) VALUES
@@ -176,89 +162,89 @@ INSERT INTO `users` (`id_user`, `username`, `nama`, `email`, `password`, `role`)
 --
 
 --
--- Indeks untuk tabel `detail_pesanan`
---
-ALTER TABLE `detail_pesanan`
-  ADD PRIMARY KEY (`id_detail`);
-
---
--- Indeks untuk tabel `kategori`
+-- Indexes for table `kategori`
 --
 ALTER TABLE `kategori`
   ADD PRIMARY KEY (`id_kategori`);
 
 --
--- Indeks untuk tabel `keranjang`
+-- Indexes for table `keranjang`
 --
 ALTER TABLE `keranjang`
   ADD PRIMARY KEY (`id_keranjang`);
 
 --
--- Indeks untuk tabel `pesanan`
+-- Indexes for table `pembayaran`
 --
-ALTER TABLE `pesanan`
-  ADD PRIMARY KEY (`id_pesanan`);
+ALTER TABLE `pembayaran`
+  ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `produk`
+-- Indexes for table `pesanan`
+--
+ALTER TABLE `pesanan`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `produk`
 --
 ALTER TABLE `produk`
   ADD PRIMARY KEY (`id_produk`);
 
 --
--- Indeks untuk tabel `reservasi`
+-- Indexes for table `reservasi`
 --
 ALTER TABLE `reservasi`
   ADD PRIMARY KEY (`id_reservasi`);
 
 --
--- Indeks untuk tabel `users`
+-- Indexes for table `users`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id_user`);
 
 --
--- AUTO_INCREMENT untuk tabel yang dibuang
+-- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT untuk tabel `detail_pesanan`
---
-ALTER TABLE `detail_pesanan`
-  MODIFY `id_detail` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- AUTO_INCREMENT untuk tabel `kategori`
+-- AUTO_INCREMENT for table `kategori`
 --
 ALTER TABLE `kategori`
-  MODIFY `id_kategori` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_kategori` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
--- AUTO_INCREMENT untuk tabel `keranjang`
+-- AUTO_INCREMENT for table `keranjang`
 --
 ALTER TABLE `keranjang`
-  MODIFY `id_keranjang` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_keranjang` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT untuk tabel `pesanan`
+-- AUTO_INCREMENT for table `pembayaran`
+--
+ALTER TABLE `pembayaran`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `pesanan`
 --
 ALTER TABLE `pesanan`
-  MODIFY `id_pesanan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT untuk tabel `produk`
+-- AUTO_INCREMENT for table `produk`
 --
 ALTER TABLE `produk`
-  MODIFY `id_produk` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id_produk` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
--- AUTO_INCREMENT untuk tabel `reservasi`
+-- AUTO_INCREMENT for table `reservasi`
 --
 ALTER TABLE `reservasi`
-  MODIFY `id_reservasi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_reservasi` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT untuk tabel `users`
+-- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
   MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
