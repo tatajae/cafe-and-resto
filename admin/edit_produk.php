@@ -1,10 +1,14 @@
 <?php
 include "../koneksi.php";
 
-$id=$_GET['id'];
+$id = $_GET['id'];
 
-$data=mysqli_query($conn,"SELECT * FROM produk WHERE id_produk='$id'");
-$d=mysqli_fetch_array($data);
+/* ambil data produk */
+$data = mysqli_query($conn, "SELECT * FROM produk WHERE id_produk='$id'");
+$d = mysqli_fetch_assoc($data);
+
+/* ambil semua kategori */
+$kategori = mysqli_query($conn, "SELECT * FROM kategori");
 ?>
 
 <!DOCTYPE html>
@@ -16,24 +20,22 @@ $d=mysqli_fetch_array($data);
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
 
 <style>
-
 body{
-background:#a97458;
-font-family:Poppins;
+    background:#a97458;
+    font-family:Poppins;
 }
 
 .form-box{
-background:white;
-padding:30px;
-margin-top:50px;
-border-radius:15px;
-box-shadow:0 5px 15px rgba(0,0,0,0.2);
+    background:white;
+    padding:30px;
+    margin-top:50px;
+    border-radius:15px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.2);
 }
 
 img{
-border-radius:10px;
+    border-radius:10px;
 }
-
 </style>
 
 </head>
@@ -48,22 +50,29 @@ border-radius:10px;
 
 <form action="update_produk.php" method="POST" enctype="multipart/form-data">
 
-<input type="hidden" name="id" value="<?php echo $d['id_produk']; ?>">
+<input type="hidden" name="id" value="<?= $d['id_produk']; ?>">
 
 <div class="mb-3">
 <label>Nama Produk</label>
-<input type="text" name="nama" class="form-control" value="<?php echo $d['nama_produk']; ?>">
+<input type="text" name="nama" class="form-control" value="<?= $d['nama_produk']; ?>" required>
 </div>
 
 <div class="mb-3">
 <label>Kategori</label>
 
-<select name="kategori" class="form-control">
+<!-- ✅ FIX DROPDOWN -->
+<select name="id_kategori" class="form-control" required>
 
-<option <?php if($d['kategori']=="Makanan") echo "selected"; ?>>Makanan</option>
-<option <?php if($d['kategori']=="Dessert") echo "selected"; ?>>Dessert</option>
-<option <?php if($d['kategori']=="Coffee") echo "selected"; ?>>Coffee</option>
-<option <?php if($d['kategori']=="Non Coffee") echo "selected"; ?>>Non Coffee</option>
+<?php while($k = mysqli_fetch_assoc($kategori)){ ?>
+
+<option value="<?= $k['id_kategori']; ?>"
+    <?php if($d['id_kategori'] == $k['id_kategori']) echo "selected"; ?>>
+
+    <?= $k['nama_kategori']; ?>
+
+</option>
+
+<?php } ?>
 
 </select>
 
@@ -71,14 +80,12 @@ border-radius:10px;
 
 <div class="mb-3">
 <label>Harga</label>
-<input type="number" name="harga" class="form-control" value="<?php echo $d['harga']; ?>">
+<input type="number" name="harga" class="form-control" value="<?= $d['harga']; ?>" required>
 </div>
 
 <div class="mb-3">
 <label>Gambar Sekarang</label><br>
-
-<img src="../gambar/<?php echo $d['gambar']; ?>" width="120">
-
+<img src="../gambar/<?= $d['gambar']; ?>" width="120">
 </div>
 
 <div class="mb-3">

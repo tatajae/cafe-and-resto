@@ -1,20 +1,27 @@
 <?php
 include "koneksi.php";
 
+/* ambil kategori */
+$kategori = mysqli_query($conn, "SELECT * FROM kategori");
+
 if(isset($_POST['simpan'])){
 
-$nama=$_POST['nama'];
-$kategori=$_POST['kategori'];
-$harga=$_POST['harga'];
+    $nama = $_POST['nama'];
+    $id_kategori = $_POST['id_kategori'];
+    $harga = $_POST['harga'];
 
-$gambar=$_FILES['gambar']['name'];
-$tmp=$_FILES['gambar']['tmp_name'];
+    $gambar = $_FILES['gambar']['name'];
+    $tmp = $_FILES['gambar']['tmp_name'];
 
-move_uploaded_file($tmp,"../gambar/".$gambar);
+    move_uploaded_file($tmp, "../gambar/".$gambar);
 
-mysqli_query($conn,"INSERT INTO produk VALUES(NULL,'$nama','$kategori','$harga','$gambar')");
+    mysqli_query($conn, "
+        INSERT INTO produk (nama_produk, id_kategori, harga, gambar)
+        VALUES ('$nama','$id_kategori','$harga','$gambar')
+    ");
 
-header("location:index.php?menu=produk");
+    header("location:index.php?menu=produk");
+    exit;
 }
 ?>
 
@@ -27,20 +34,18 @@ header("location:index.php?menu=produk");
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
 
 <style>
-
 body{
-background:#a97458;
-font-family:Poppins;
+    background:#a97458;
+    font-family:Poppins;
 }
 
 .form-box{
-background:white;
-padding:30px;
-margin-top:50px;
-border-radius:15px;
-box-shadow:0 5px 15px rgb(255, 255, 255);
+    background:white;
+    padding:30px;
+    margin-top:50px;
+    border-radius:15px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.2);
 }
-
 </style>
 
 </head>
@@ -63,12 +68,15 @@ box-shadow:0 5px 15px rgb(255, 255, 255);
 <div class="mb-3">
 <label>Kategori</label>
 
-<select name="kategori" class="form-control">
+<!-- ✅ FIX DROPDOWN -->
+<select name="id_kategori" class="form-control" required>
+<option value="">-- Pilih Kategori --</option>
 
-<option>Makanan</option>
-<option>Dessert</option>
-<option>Coffee</option>
-<option>Non Coffee</option>
+<?php while($k = mysqli_fetch_assoc($kategori)){ ?>
+<option value="<?= $k['id_kategori']; ?>">
+    <?= $k['nama_kategori']; ?>
+</option>
+<?php } ?>
 
 </select>
 
