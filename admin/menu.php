@@ -55,8 +55,20 @@ else if($menu=="pesanan"){
   include "pesanan.php";
 }
 
+else if($menu=="detail_pesanan"){
+  include "detail_pesanan.php";
+}
+
 else if($menu=="pembayaran"){
   include "pembayaran.php";
+}
+
+else if($menu=="struk"){
+  include "struk.php";
+}
+
+else if($menu=="struk_print"){
+  include "struk_print.php";
 }
 
 else{

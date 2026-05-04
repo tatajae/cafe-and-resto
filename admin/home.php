@@ -17,7 +17,7 @@
             <tr><th>Nama</th><th>Total</th><th>Status</th></tr>
             <?php while($p = mysqli_fetch_assoc($pesanan)){ ?>
             <tr>
-                <td><?= $p['nama'] ?></td>
+                <td><?= $p['nama_pemesan'] ?></td>
                 <td>Rp <?= $p['total'] ?></td>
                 <td><?= $p['status'] ?></td>
             </tr>

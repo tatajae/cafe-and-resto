@@ -27,7 +27,7 @@ $total_pesanan = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM pesanan"));
 // ===============================
 // DATA TERBARU
 // ===============================
-$pesanan = mysqli_query($conn, "SELECT * FROM pesanan ORDER BY id DESC LIMIT 5");
+$pesanan = mysqli_query($conn, "SELECT * FROM pesanan ORDER BY id_pesanan DESC LIMIT 5");
 $pembayaran = mysqli_query($conn, "SELECT * FROM pembayaran ORDER BY id DESC LIMIT 5");
 ?>
 

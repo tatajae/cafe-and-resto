@@ -35,6 +35,10 @@ switch ($page) {
         include "detail_pesanan.php";
         break;
 
+    case 'struk':
+        include "struk.php";
+        break;
+
     default:
         echo "<h4 class='text-center mt-5'>Halaman tidak ditemukan</h4>";
         break;
