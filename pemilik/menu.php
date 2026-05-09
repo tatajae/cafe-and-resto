@@ -1,18 +1,43 @@
 <?php
-$page = isset($_GET['page']) ? $_GET['page'] : 'home';
 
-switch ($page) {
+$page = $_GET['page'] ?? 'home';
+
+switch($page){
 
     case 'home':
-        include "home.php";
-        break;
+        include "dashboard.php";
+    break;
 
-    case 'laporan':
-        include "laporan.php";
-        break;
+    case 'monitor_pesanan':
+        include "monitor_pesanan.php";
+    break;
+
+    case 'laporan_penjualan':
+        include "laporan_penjualan.php";
+    break;
+
+    case 'metode_pembayaran':
+        include "metode_pembayaran.php";
+    break;
+
+    case 'produk_terlaris':
+        include "produk_terlaris.php";
+    break;
+
+    case 'keuangan':
+        include "keuangan.php";
+    break;
+
+    case 'export_data':
+        include "export_data.php";
+    break;
+
+    case 'notifikasi':
+        include "notifikasi.php";
+    break;
 
     default:
-        echo "<h4 class='text-center mt-5'>Halaman tidak ditemukan</h4>";
-        break;
+        include "dashboard.php";
+    break;
 }
 ?>

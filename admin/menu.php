@@ -63,12 +63,36 @@ else if($menu=="pembayaran"){
   include "pembayaran.php";
 }
 
+else if($menu=="konfirmasi_pembayaran"){
+  include "konfirmasi_pembayaran.php";
+}
+
 else if($menu=="struk"){
   include "struk.php";
 }
 
 else if($menu=="struk_print"){
   include "struk_print.php";
+}
+
+else if($menu=="struk_cash"){
+  include "struk_cash.php";
+}
+
+else if($menu=="update_status_reservasi"){
+  include "update_status_reservasi.php";
+}
+
+else if($menu=="dashboard_keuangan"){
+  include "dashboard_keuangan.php";
+}
+
+else if($menu=="laporan_pemasukan"){
+  include "laporan_pemasukan.php";
+}
+
+else if($menu=="laporan_harian"){
+  include "laporan_harian.php";
 }
 
 else{

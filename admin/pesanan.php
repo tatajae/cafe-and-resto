@@ -1,127 +1,167 @@
 <?php
 include "../koneksi.php";
 
-/* CEK LOGIN */
-if (!isset($_SESSION['login'])) {
-    header("Location: ../login.php");
-    exit;
-}
-
-/* CEK ROLE ADMIN */
-if ($_SESSION['role'] != 'admin') {
-    header("Location: ../login.php");
-    exit;
-}
-
-/* AMBIL DATA - SUDAH HIDE DIBATALKAN */
-$data = mysqli_query($conn, "
-SELECT * FROM pesanan 
-WHERE status != 'dibatalkan'
-ORDER BY id_pesanan DESC
-");
+/*
+PASTIKAN SAAT INSERT PESANAN
+STATUS DEFAULT = Pending
+*/
 ?>
 
-<!DOCTYPE html>
-<html>
-<head>
-<title>Data Pesanan</title>
+<div class="container mt-5 mb-5">
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <div class="card border-0 shadow-lg rounded-4 p-4">
 
-<style>
-body{
-    background:#a97458;
-    font-family:Poppins;
-}
+        <!-- HEADER -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            
+            <h1 class="fw-bold" style="color:#5C3D2E;">
+                📦 Data Pesanan
+            </h1>
 
-.container-box{
-    background:white;
-    padding:25px;
-    margin-top:30px;
-    border-radius:15px;
-    box-shadow:0 5px 15px rgba(0,0,0,0.2);
-}
+            <a href="index.php?menu=dashboard" 
+               class="btn btn-dark rounded-pill px-4">
+                Kembali
+            </a>
 
-.btn-sm{margin:2px;}
-</style>
+        </div>
 
-</head>
+        <!-- TABLE -->
+        <div class="table-responsive">
 
-<body>
+            <table class="table table-hover align-middle text-center">
 
-<div class="container">
-<div class="container-box">
+                <thead class="table-dark">
+                    <tr>
+                        <th>No</th>
+                        <th>Nama Pemesan</th>
+                        <th>No Meja</th>
+                        <th>Pembayaran</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                        <th width="350">Aksi</th>
+                    </tr>
+                </thead>
 
-<h3 class="mb-4">📦 Data Pesanan</h3>
+                <tbody>
 
-<table class="table table-bordered text-center">
+                <?php
+                $no = 1;
 
-<tr class="table-dark">
-<th>No</th>
-<th>Nama</th>
-<th>Total</th>
-<th>Status</th>
-<th>Aksi</th>
-</tr>
+                $query = mysqli_query($conn,"
+                    SELECT * FROM pesanan
+                    ORDER BY id_pesanan DESC
+                ");
 
-<?php $no=1; while($p = mysqli_fetch_assoc($data)){ ?>
+                while($d = mysqli_fetch_array($query)){
 
-<tr>
+                    // STATUS DEFAULT
+                    $status = strtolower($d['status']);
 
-<td><?= $no++ ?></td>
-<td><?= $p['nama_pemesan'] ?></td>
-<td>Rp <?= number_format($p['total'],0,',','.') ?></td>
+                    // JIKA STATUS KOSONG
+                    if(empty($status)){
+                        $status = 'pending';
+                    }
+                ?>
 
-<td>
-<?php if($p['status']=='pending'){ ?>
-<span class="badge bg-warning text-dark">Pending</span>
+                    <tr>
 
-<?php } elseif($p['status']=='diproses'){ ?>
-<span class="badge bg-primary">Diproses</span>
+                        <!-- NO -->
+                        <td><?= $no++ ?></td>
 
-<?php } elseif($p['status']=='selesai'){ ?>
-<span class="badge bg-success">Selesai</span>
-<?php } ?>
-</td>
+                        <!-- NAMA -->
+                        <td>
+                            <b><?= $d['nama_pemesan'] ?></b>
+                        </td>
 
-<td>
+                        <!-- MEJA -->
+                        <td><?= $d['meja'] ?></td>
 
-<!-- DETAIL -->
-<a href="detail_pesanan.php?id=<?= $p['id_pesanan'] ?>" 
-class="btn btn-info btn-sm">
-Detail
-</a>
+                        <!-- PEMBAYARAN -->
+                        <td><?= $d['pembayaran'] ?></td>
 
-<?php if($p['status']=='pending'){ ?>
+                        <!-- TOTAL -->
+                        <td>
+                            <b class="text-success">
+                                Rp <?= number_format($d['total']) ?>
+                            </b>
+                        </td>
 
-<!-- PROSES -->
-<a href="update_status.php?id=<?= $p['id_pesanan'] ?>&status=diproses" 
-class="btn btn-primary btn-sm"
-onclick="return confirm('Terima pesanan ini?')">
-⚙ Proses
-</a>
+                        <!-- STATUS -->
+                        <td>
 
-<?php } elseif($p['status']=='diproses'){ ?>
+                            <?php if($status == 'pending'){ ?>
 
-<!-- SELESAI -->
-<a href="update_status.php?id=<?= $p['id_pesanan'] ?>&status=selesai" 
-class="btn btn-success btn-sm"
-onclick="return confirm('Pesanan sudah selesai?')">
-✔ Selesai
-</a>
+                                <span class="badge bg-warning text-dark p-2">
+                                    Pending
+                                </span>
 
-<?php } ?>
+                            <?php } elseif($status == 'diproses'){ ?>
 
-</td>
+                                <span class="badge bg-primary p-2">
+                                    Diproses
+                                </span>
 
-</tr>
+                            <?php } elseif($status == 'selesai'){ ?>
 
-<?php } ?>
+                                <span class="badge bg-success p-2">
+                                    Selesai
+                                </span>
 
-</table>
+                            <?php } elseif($status == 'dibatalkan'){ ?>
+
+                                <span class="badge bg-danger p-2">
+                                    Dibatalkan
+                                </span>
+
+                            <?php } ?>
+
+                        </td>
+
+                        <!-- AKSI -->
+                        <td>
+
+                            <!-- DETAIL -->
+                            <a href="index.php?menu=detail_pesanan&id=<?= $d['id_pesanan'] ?>"
+                               class="btn btn-info btn-sm rounded-pill">
+                                Detail
+                            </a>
+
+                            <!-- JIKA STATUS PENDING -->
+                            <?php if($status == 'pending'){ ?>
+
+                                <!-- PROSES -->
+                                <a href="index.php?menu=konfirmasi_pembayaran&id=<?= $d['id_pesanan'] ?>"
+                                   class="btn btn-success btn-sm rounded-pill"
+                                   onclick="return confirm('Proses pesanan ini?')">
+                                    Proses
+                                </a>
+
+                            <?php } ?>
+
+                            <!-- JIKA STATUS DIPROSES -->
+                            <?php if($status == 'diproses'){ ?>
+
+                                <!-- SELESAI -->
+                                <a href="selesai_pesanan.php?id=<?= $d['id_pesanan'] ?>"
+                                   class="btn btn-primary btn-sm rounded-pill"
+                                   onclick="return confirm('Selesaikan pesanan ini?')">
+                                    Selesai
+                                </a>
+
+                            <?php } ?>
+
+                        </td>
+
+                    </tr>
+
+                <?php } ?>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
 
 </div>
-</div>
-
-</body>
-</html>

@@ -1,88 +1,154 @@
 <?php
 include "../koneksi.php";
 
-$id_user = $_SESSION['id_user'] ?? 0;
+if (!isset($_SESSION['id_user'])) {
+    header("Location: ../login.php");
+    exit;
+}
 
-/* =========================
-   AMBIL PESANAN (OPSI 1)
-   DIBATALKAN TIDAK TAMPIL
-========================= */
-$data = mysqli_query($conn, "
-    SELECT * FROM pesanan 
-    WHERE id_user='$id_user' 
-    AND status != 'dibatalkan'
-    ORDER BY id_pesanan DESC
-") or die(mysqli_error($conn));
+$id_user = $_SESSION['id_user'];
+
+$pesanan = mysqli_query($conn, "
+SELECT * FROM pesanan
+WHERE id_user='$id_user'
+ORDER BY id_pesanan DESC
+");
 ?>
 
 <div class="container-box">
 
-<h4>📦 Pesanan Saya</h4>
+    <h4 class="mb-4">Pesanan Saya</h4>
 
-<?php if(mysqli_num_rows($data) == 0){ ?>
+    <?php if(mysqli_num_rows($pesanan) == 0){ ?>
 
-<p>Belum ada pesanan.</p>
-<a href="dashboard.php?page=menu" class="btn btn-dark">
-Pesan Sekarang
-</a>
+        <div class="alert alert-warning">
+            Belum ada pesanan.
+        </div>
 
-<?php } else { ?>
+    <?php } else { ?>
 
-<table class="table table-bordered text-center mt-3">
+    <div class="table-responsive">
 
-<tr class="table-dark">
-<th>No</th>
-<th>Tanggal</th>
-<th>Total</th>
-<th>Status</th>
-<th>Aksi</th>
-</tr>
+        <table class="table table-bordered table-hover align-middle">
 
-<?php $no=1; while($d = mysqli_fetch_assoc($data)){ ?>
+            <thead class="table-dark">
+                <tr>
+                    <th>No</th>
+                    <th>Tanggal</th>
+                    <th>Total</th>
+                    <th>Pembayaran</th>
+                    <th>Status</th>
+                    <th>Keterangan</th>
+                    <th width="230">Aksi</th>
+                </tr>
+            </thead>
 
-<tr>
+            <tbody>
 
-<td><?= $no++ ?></td>
+            <?php 
+            $no = 1;
 
-<td>
-<?= date('d-m-Y H:i', strtotime($d['tanggal'])); ?>
-</td>
+            while($p = mysqli_fetch_assoc($pesanan)){
 
-<td>
-Rp <?= number_format($d['total'],0,',','.'); ?>
-</td>
+                // ambil status dari database
+                $status = strtolower(trim($p['status'] ?? 'pending'));
+            ?>
 
-<td>
+            <tr>
 
-<?php if($d['status']=="pending"){ ?>
-<span class="badge bg-warning text-dark">Pending</span>
+                <td><?= $no++; ?></td>
 
-<?php } elseif($d['status']=="diproses"){ ?>
-<span class="badge bg-primary">Diproses</span>
+                <td>
+                    <?= date('d-m-Y H:i', strtotime($p['tanggal'])); ?>
+                </td>
 
-<?php } elseif($d['status']=="selesai"){ ?>
-<span class="badge bg-success">Selesai</span>
+                <td>
+                    <b>
+                        Rp <?= number_format($p['total']); ?>
+                    </b>
+                </td>
 
-<?php } ?>
+                <td>
+                    <?= $p['pembayaran']; ?>
+                </td>
 
-</td>
+                <!-- STATUS -->
+                <td>
 
-<td>
+                    <?php
+                    if($status == 'pending'){
+                        echo '<span class="badge bg-warning text-dark">Pending</span>';
+                    }
+                    elseif($status == 'diproses'){
+                        echo '<span class="badge bg-info text-dark">Diproses</span>';
+                    }
+                    elseif($status == 'selesai'){
+                        echo '<span class="badge bg-success">Selesai</span>';
+                    }
+                    elseif($status == 'dibatalkan'){
+                        echo '<span class="badge bg-danger">Dibatalkan</span>';
+                    }
+                    else{
+                        echo '<span class="badge bg-secondary">Pending</span>';
+                    }
+                    ?>
 
-<!-- DETAIL -->
-<a href="dashboard.php?page=detail_pesanan&id=<?= $d['id_pesanan']; ?>" 
-class="btn btn-info btn-sm">
-Detail
-</a>
+                </td>
 
-</td>
+                <!-- KETERANGAN -->
+                <td>
 
-</tr>
+                    <?php
+                    if($status == "pending"){
+                        echo "Menunggu konfirmasi admin";
+                    }
+                    elseif($status == "diproses"){
+                        echo "Pesanan sedang diproses";
+                    }
+                    elseif($status == "selesai"){
+                        echo "Pesanan selesai";
+                    }
+                    elseif($status == "dibatalkan"){
+                        echo "Pesanan dibatalkan";
+                    }
+                    else{
+                        echo "Menunggu konfirmasi admin";
+                    }
+                    ?>
 
-<?php } ?>
+                </td>
 
-</table>
+                <!-- AKSI -->
+                <td>
 
-<?php } ?>
+                    <!-- DETAIL -->
+                    <a href="dashboard.php?page=detail_pesanan&id=<?= $p['id_pesanan']; ?>"
+                       class="btn btn-sm btn-primary">
+                        Detail
+                    </a>
+
+                    <!-- BAYAR -->
+                    <?php if($status == 'pending'){ ?>
+
+                        <a href="dashboard.php?page=pembayaran&id=<?= $p['id_pesanan']; ?>"
+                           class="btn btn-sm btn-success">
+                            Bayar
+                        </a>
+
+                    <?php } ?>
+
+                </td>
+
+            </tr>
+
+            <?php } ?>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    <?php } ?>
 
 </div>

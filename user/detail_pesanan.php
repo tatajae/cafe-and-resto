@@ -20,6 +20,9 @@ if(mysqli_num_rows($p) == 0){
 
 $p = mysqli_fetch_assoc($p);
 
+/* STATUS */
+$status = strtolower(trim($p['status'] ?? 'pending'));
+
 /* DETAIL PESANAN */
 $detail = mysqli_query($conn, "
 SELECT d.*, p.nama_produk
@@ -34,25 +37,33 @@ WHERE d.id_pesanan='$id'
 <h4>📦 Detail Pesanan</h4>
 
 <p><b>Nama:</b> <?= $p['nama_pemesan']; ?></p>
+
 <p><b>Meja:</b> <?= $p['meja']; ?></p>
+
 <p><b>Tanggal:</b> <?= date('d-m-Y H:i', strtotime($p['tanggal'])); ?></p>
+
 <p><b>Pembayaran:</b> <?= $p['pembayaran']; ?></p>
 
 <p>
 <b>Status:</b>
 
-<?php if($p['status']=="pending"){ ?>
-<span class="badge bg-warning text-dark">Pending</span>
-
-<?php } elseif($p['status']=="diproses"){ ?>
-<span class="badge bg-primary">Diproses</span>
-
-<?php } elseif($p['status']=="selesai"){ ?>
-<span class="badge bg-success">Selesai</span>
-
-<?php } elseif($p['status']=="dibatalkan"){ ?>
-<span class="badge bg-danger">Dibatalkan</span>
-<?php } ?>
+<?php
+if($status == "pending"){
+    echo '<span class="badge bg-warning text-dark">Pending</span>';
+}
+elseif($status == "diproses"){
+    echo '<span class="badge bg-primary">Diproses</span>';
+}
+elseif($status == "selesai"){
+    echo '<span class="badge bg-success">Selesai</span>';
+}
+elseif($status == "dibatalkan"){
+    echo '<span class="badge bg-danger">Dibatalkan</span>';
+}
+else{
+    echo '<span class="badge bg-secondary">Pending</span>';
+}
+?>
 
 </p>
 
@@ -69,16 +80,25 @@ WHERE d.id_pesanan='$id'
 
 <?php 
 $total = 0;
+
 while($d = mysqli_fetch_assoc($detail)){
+
 $subtotal = $d['harga'] * $d['jumlah'];
 $total += $subtotal;
 ?>
 
 <tr>
 <td><?= $d['nama_produk']; ?></td>
-<td>Rp <?= number_format($d['harga'],0,',','.'); ?></td>
+
+<td>
+Rp <?= number_format($d['harga'],0,',','.'); ?>
+</td>
+
 <td><?= $d['jumlah']; ?></td>
-<td>Rp <?= number_format($subtotal,0,',','.'); ?></td>
+
+<td>
+Rp <?= number_format($subtotal,0,',','.'); ?>
+</td>
 </tr>
 
 <?php } ?>
@@ -91,11 +111,9 @@ Total: Rp <?= number_format($total,0,',','.'); ?>
 
 <hr>
 
-<!-- ========================= -->
 <!-- ACTION BUTTONS -->
-<!-- ========================= -->
 
-<?php if($p['status']=="pending"){ ?>
+<?php if($status == "pending"){ ?>
 
 <a href="batal_pesanan.php?id=<?= $p['id_pesanan']; ?>" 
 class="btn btn-danger"
@@ -104,11 +122,6 @@ onclick="return confirm('Yakin mau batalkan pesanan ini?')">
 </a>
 
 <?php } ?>
-
-<!-- STRUK BUTTON (SEMUANYA BISA) -->
-<a href="struk.php?id=<?= $p['id_pesanan']; ?>" target="_blank" class="btn btn-dark">
-🧾 Cetak Struk
-</a>
 
 <br><br>
 

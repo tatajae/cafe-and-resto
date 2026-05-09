@@ -27,6 +27,10 @@ switch ($page) {
         include "reservasi.php";
         break;
 
+    case 'pembayaran':
+        include "pembayaran.php";
+        break;
+
     case 'profil':
         include "profil.php";
         break;
