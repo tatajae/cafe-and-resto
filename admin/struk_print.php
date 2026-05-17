@@ -1,5 +1,4 @@
 <?php
-session_start();
 include "../koneksi.php";
 
 require_once "../vendor/autoload.php";
@@ -7,94 +6,177 @@ require_once "../vendor/autoload.php";
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
 
-/* CEK LOGIN */
-if (!isset($_SESSION['login'])) {
-    header("Location: ../login.php");
-    exit;
-}
-
 $id = $_GET['id'] ?? 0;
 
-if (!$id) {
+/* =========================
+   VALIDASI ID
+========================= */
+if(!$id){
     die("ID tidak valid");
 }
 
-/* DATA PESANAN */
-$p = mysqli_query($conn, "SELECT * FROM pesanan WHERE id_pesanan='$id'");
-if (mysqli_num_rows($p) == 0) {
-    die("Data tidak ditemukan");
-}
-$p = mysqli_fetch_assoc($p);
-
-/* DETAIL PRODUK */
-$detail = mysqli_query($conn, "
-SELECT d.*, pr.nama_produk 
-FROM detail_pesanan d
-JOIN produk pr ON d.id_produk = pr.id_produk
-WHERE d.id_pesanan='$id'
+/* =========================
+   DATA PESANAN
+========================= */
+$q = mysqli_query($conn,"
+    SELECT * FROM pesanan
+    WHERE id_pesanan='$id'
 ");
 
-/* BUAT FOLDER QR */
-if (!file_exists("../uploads")) {
-    mkdir("../uploads", 0777, true);
+if(mysqli_num_rows($q) == 0){
+    die("Data tidak ditemukan");
 }
 
-/* GENERATE QR */
-$qrData = "ORDER#".$p['id_pesanan']." | ".$p['nama_pemesan']." | Rp ".$p['total'];
+$p = mysqli_fetch_assoc($q);
+
+/* =========================
+   DETAIL PESANAN
+========================= */
+$detail = mysqli_query($conn,"
+    SELECT d.*, pr.nama_produk
+    FROM detail_pesanan d
+    JOIN produk pr ON d.id_produk = pr.id_produk
+    WHERE d.id_pesanan='$id'
+");
+
+/* =========================
+   DATA PEMBAYARAN
+========================= */
+$bayar = mysqli_fetch_assoc(mysqli_query($conn,"
+    SELECT * FROM pembayaran
+    WHERE id_pesanan='$id'
+    ORDER BY id DESC
+"));
+
+/* =========================
+   QR CODE
+========================= */
+if(!file_exists("../uploads")){
+    mkdir("../uploads",0777,true);
+}
+
+$qrData = 
+"ORDER #".$p['id_pesanan'].
+" | ".$p['nama_pemesan'].
+" | Rp ".$p['total'];
 
 $qr = new QrCode($qrData);
+
 $writer = new PngWriter();
+
 $result = $writer->write($qr);
 
 $qrPath = "../uploads/qr_".$id.".png";
+
 $result->saveToFile($qrPath);
+
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-<title>Print Struk</title>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Struk Pembayaran</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
+
+<style>
+
 body{
     background:#f1f1f1;
     font-family:'Poppins', sans-serif;
 }
 
 .box{
-    width:320px;
-    margin:40px auto;
+    width:350px;
+    margin:30px auto;
     background:white;
     padding:20px;
-    border-radius:15px;
-    box-shadow:0 10px 25px rgba(0,0,0,0.1);
+    border-radius:18px;
+    box-shadow:0 15px 30px rgba(0,0,0,0.12);
 }
 
-.header{text-align:center;}
-.header h2{margin:0;color:#5a3825;}
+.header{
+    text-align:center;
+}
 
-.info{font-size:13px;margin-top:10px;}
-.info p{margin:2px 0;}
-
-.divider{border-top:1px dashed #ddd;margin:10px 0;}
-
-.table{width:100%;font-size:13px;}
-.table th{text-align:left;color:#777;}
-.table td{padding:5px 0;}
-.right{text-align:right;}
-
-.total{
-    margin-top:10px;
-    border-top:1px solid #eee;
-    padding-top:10px;
-    display:flex;
-    justify-content:space-between;
+.header h2{
+    margin:0;
+    color:#5a3825;
+    font-size:24px;
     font-weight:600;
 }
 
-.qr{text-align:center;margin-top:15px;}
+.header small{
+    color:#888;
+    font-size:12px;
+}
+
+.info{
+    font-size:13px;
+    margin-top:12px;
+}
+
+.info p{
+    margin:4px 0;
+}
+
+.divider{
+    border-top:1px dashed #ccc;
+    margin:12px 0;
+}
+
+.table{
+    width:100%;
+    font-size:13px;
+}
+
+.table th{
+    text-align:left;
+    color:#666;
+    padding-bottom:8px;
+    font-weight:600;
+}
+
+.table td{
+    padding:6px 0;
+}
+
+.right{
+    text-align:right;
+}
+
+.total-box{
+    margin-top:10px;
+    border-top:1px solid #eee;
+    padding-top:10px;
+}
+
+.total-row{
+    display:flex;
+    justify-content:space-between;
+    margin:5px 0;
+    font-size:13px;
+}
+
+.grand-total{
+    font-weight:600;
+    font-size:15px;
+}
+
+.qr{
+    text-align:center;
+    margin-top:15px;
+}
+
+.qr img{
+    border-radius:10px;
+}
 
 .footer{
     text-align:center;
@@ -104,120 +186,188 @@ body{
 }
 
 .btn-area{
-    width:320px;
-    margin:auto;
-    margin-top:15px;
+    width:350px;
+    margin:15px auto;
+    display:flex;
+    gap:10px;
 }
 
 .btn{
-    width:100%;
+    flex:1;
     padding:10px;
     border:none;
-    border-radius:10px;
-    background:#ddd;
+    border-radius:12px;
     text-align:center;
     text-decoration:none;
-    display:block;
+    font-weight:500;
+    font-size:14px;
+    cursor:pointer;
+}
+
+.btn-dark{
+    background:black;
+    color:white;
+}
+
+.btn-secondary{
+    background:#ddd;
     color:black;
 }
 
-/* PRINT MODE */
-@media print {
-    body * {
-        visibility: hidden;
+@media print{
+
+    body{
+        background:white;
     }
 
-    .box, .box * {
-        visibility: visible;
+    .box{
+        box-shadow:none;
+        margin:0 auto;
     }
 
-    .box {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        box-shadow: none;
+    .btn-area{
+        display:none;
     }
 
-    .btn-area {
-        display: none;
-    }
 }
+
 </style>
 
-<script>
-function printStruk(){
-    window.print();
-}
-
-/* 🔥 INI KUNCINYA */
-window.onafterprint = function(){
-    window.location.href = 'detail_pesanan.php?id=<?= $id ?>';
-};
-</script>
+</style>
 
 </head>
 
-<!-- AUTO PRINT -->
-<body onload="printStruk()">
+<body onload="window.print()">
 
 <div class="box">
 
-<div class="header">
-<h2>☕ Coffee Shop</h2>
-<small>Receipt</small>
+    <!-- HEADER -->
+    <div class="header">
+
+        <h2>☕ BLACK COFFEE</h2>
+        <small>Cafe & Resto</small>
+
+    </div>
+
+    <!-- INFO -->
+    <div class="info">
+
+        <p><b>ID:</b> #<?= $p['id_pesanan']; ?></p>
+
+        <p><b>Nama:</b> <?= $p['nama_pemesan']; ?></p>
+
+        <p><b>Meja:</b> <?= $p['meja']; ?></p>
+
+        <p><b>Pembayaran:</b> <?= $bayar['metode'] ?? 'Cash'; ?></p>
+
+        <p>
+            <b>Tanggal:</b>
+            <?= date('d M Y H:i', strtotime($p['tanggal'])); ?>
+        </p>
+
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- DETAIL PESANAN -->
+    <table class="table">
+
+        <tr>
+            <th>Menu</th>
+            <th class="right">Qty</th>
+            <th class="right">Total</th>
+        </tr>
+
+        <?php
+        $grandTotal = 0;
+
+        while($d = mysqli_fetch_assoc($detail)){
+
+            $subTotal = $d['harga'] * $d['jumlah'];
+
+            $grandTotal += $subTotal;
+        ?>
+
+        <tr>
+
+            <td><?= $d['nama_produk']; ?></td>
+
+            <td class="right">
+                <?= $d['jumlah']; ?>
+            </td>
+
+            <td class="right">
+                Rp <?= number_format($subTotal,0,',','.'); ?>
+            </td>
+
+        </tr>
+
+        <?php } ?>
+
+    </table>
+
+    <div class="divider"></div>
+
+    <!-- TOTAL -->
+    <div class="total-box">
+
+        <div class="total-row grand-total">
+
+            <span>Total</span>
+
+            <span>
+                Rp <?= number_format($grandTotal,0,',','.'); ?>
+            </span>
+
+        </div>
+
+        <div class="total-row">
+
+            <span>Uang Bayar</span>
+
+            <span>
+                Rp <?= number_format($bayar['uang_bayar'] ?? 0,0,',','.'); ?>
+            </span>
+
+        </div>
+
+        <div class="total-row">
+
+            <span>Kembalian</span>
+
+            <span>
+                Rp <?= number_format($bayar['kembalian'] ?? 0,0,',','.'); ?>
+            </span>
+
+        </div>
+
+    </div>
+
+    <!-- QR -->
+    <div class="qr">
+
+        <img src="<?= $qrPath ?>" width="120">
+
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+        Terima kasih sudah berkunjung ☕
+    </div>
+
 </div>
 
-<div class="info">
-<p>ID: <?= $p['id_pesanan']; ?></p>
-<p>Nama: <?= $p['nama_pemesan']; ?></p>
-<p>Tanggal: <?= date('d M Y H:i', strtotime($p['tanggal'])); ?></p>
-</div>
-
-<div class="divider"></div>
-
-<table class="table">
-<tr>
-<th>Menu</th>
-<th class="right">Qty</th>
-<th class="right">Total</th>
-</tr>
-
-<?php 
-$total = 0;
-while($d = mysqli_fetch_assoc($detail)){
-$sub = $d['harga'] * $d['jumlah'];
-$total += $sub;
-?>
-<tr>
-<td><?= $d['nama_produk']; ?></td>
-<td class="right"><?= $d['jumlah']; ?></td>
-<td class="right">Rp <?= number_format($sub,0,',','.'); ?></td>
-</tr>
-<?php } ?>
-</table>
-
-<div class="total">
-<span>Total</span>
-<span>Rp <?= number_format($total,0,',','.'); ?></span>
-</div>
-
-<div class="qr">
-<img src="<?= $qrPath ?>" width="120">
-<p style="font-size:11px;color:#999;">Scan untuk detail</p>
-</div>
-
-<div class="footer">
-Terima kasih ☕
-</div>
-
-</div>
-
-<!-- fallback tombol -->
+<!-- BUTTON -->
 <div class="btn-area">
-<a href="detail_pesanan.php?id=<?= $id ?>" class="btn">
-⬅ Kembali
-</a>
+
+    <a href="struk_cash.php?id=<?= $id ?>" class="btn btn-dark">
+        🖨 Print Ulang
+    </a>
+
+    <a href="index.php?menu=pesanan" class="btn btn-secondary">
+        ⬅ Kembali
+    </a>
+
 </div>
 
 </body>

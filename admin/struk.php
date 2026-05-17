@@ -182,7 +182,7 @@ Terima kasih ☕
 🖨 Cetak
 </a>
 
-<a href="detail_pesanan.php?id=<?= $id ?>" class="btn">
+<a href="index.php?menu=detail_pesanan&id=<?= $id ?>" class="btn">
 ⬅ Kembali
 </a>
 

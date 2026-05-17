@@ -5,7 +5,7 @@ $page = $_GET['page'] ?? 'home';
 switch($page){
 
     case 'home':
-        include "dashboard.php";
+        include "home.php";
     break;
 
     case 'monitor_pesanan':

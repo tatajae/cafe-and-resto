@@ -1,32 +1,42 @@
 <?php
 include "../koneksi.php";
 
-$id = $_GET['id'] ?? 0;
-$status = $_GET['status'] ?? '';
+$id = $_GET['id'];
 
-// validasi
-$allowed = ['pending','diproses','selesai','dibatalkan'];
+/* AMBIL STATUS */
+$data = mysqli_fetch_assoc(mysqli_query($conn,"
+SELECT status
+FROM pesanan
+WHERE id_pesanan='$id'
+"));
 
-if(!in_array($status, $allowed)){
-    die("Status tidak valid!");
+$status = strtolower(trim($data['status'] ?? 'pending'));
+
+/* LOGIKA STATUS */
+if($status == 'dibayar'){
+
+    $update = 'diproses';
+
+}
+elseif($status == 'diproses'){
+
+    $update = 'selesai';
+
+}
+else{
+
+    $update = $status;
+
 }
 
-// cek apakah id ada
-$cek = mysqli_query($conn, "SELECT * FROM pesanan WHERE id_pesanan='$id'");
-if(mysqli_num_rows($cek) == 0){
-    die("ID tidak ditemukan!");
-}
-
-// update
-$query = mysqli_query($conn, "
-UPDATE pesanan 
-SET status='$status' 
+/* UPDATE */
+mysqli_query($conn,"
+UPDATE pesanan
+SET status='$update'
 WHERE id_pesanan='$id'
 ");
 
-// cek berhasil / tidak
-if($query){
-    header("Location: index.php?menu=pesanan");
-} else {
-    echo "Gagal update: " . mysqli_error($conn);
-}
+/* KEMBALI */
+header("Location: index.php?menu=pesanan");
+exit;
+?>

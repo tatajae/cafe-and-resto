@@ -1,11 +1,5 @@
 <?php
 include "../koneksi.php";
-
-if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
-    header("Location: ../login.php");
-    exit;
-}
-
 $id = $_GET['id'];
 
 /* AMBIL DATA PESANAN */
@@ -237,9 +231,8 @@ body{
 
     <div class="col-md-6 mb-3">
 
-        <a href="javascript:history.back()" 
-           class="btn btn-secondary">
-            ⬅ Kembali
+        <a href="index.php?menu=pesanan&id=<?= $id ?>" class="btn">
+        ⬅ Kembali
         </a>
 
         <?php if($status == "selesai"){ ?>

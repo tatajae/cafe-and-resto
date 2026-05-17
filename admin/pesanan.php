@@ -1,36 +1,32 @@
+ <!-- pesanan.php -->
+
 <?php
 include "../koneksi.php";
-
-/*
-PASTIKAN SAAT INSERT PESANAN
-STATUS DEFAULT = Pending
-*/
 ?>
 
 <div class="container mt-5 mb-5">
 
     <div class="card border-0 shadow-lg rounded-4 p-4">
 
-        <!-- HEADER -->
         <div class="d-flex justify-content-between align-items-center mb-4">
-            
+
             <h1 class="fw-bold" style="color:#5C3D2E;">
                 📦 Data Pesanan
             </h1>
 
-            <a href="index.php?menu=dashboard" 
+            <a href="index.php?menu=dashboard"
                class="btn btn-dark rounded-pill px-4">
                 Kembali
             </a>
 
         </div>
 
-        <!-- TABLE -->
         <div class="table-responsive">
 
             <table class="table table-hover align-middle text-center">
 
                 <thead class="table-dark">
+
                     <tr>
                         <th>No</th>
                         <th>Nama Pemesan</th>
@@ -38,8 +34,9 @@ STATUS DEFAULT = Pending
                         <th>Pembayaran</th>
                         <th>Total</th>
                         <th>Status</th>
-                        <th width="350">Aksi</th>
+                        <th width="400">Aksi</th>
                     </tr>
+
                 </thead>
 
                 <tbody>
@@ -48,111 +45,115 @@ STATUS DEFAULT = Pending
                 $no = 1;
 
                 $query = mysqli_query($conn,"
-                    SELECT * FROM pesanan
-                    ORDER BY id_pesanan DESC
+                SELECT * FROM pesanan
+                ORDER BY id_pesanan DESC
                 ");
 
                 while($d = mysqli_fetch_array($query)){
 
-                    // STATUS DEFAULT
-                    $status = strtolower($d['status']);
-
-                    // JIKA STATUS KOSONG
-                    if(empty($status)){
-                        $status = 'pending';
-                    }
+                    $status = strtolower(trim($d['status']));
                 ?>
 
-                    <tr>
+                <tr>
 
-                        <!-- NO -->
-                        <td><?= $no++ ?></td>
+                    <td><?= $no++ ?></td>
 
-                        <!-- NAMA -->
-                        <td>
-                            <b><?= $d['nama_pemesan'] ?></b>
-                        </td>
+                    <td>
+                        <b><?= $d['nama_pemesan'] ?></b>
+                    </td>
 
-                        <!-- MEJA -->
-                        <td><?= $d['meja'] ?></td>
+                    <td><?= $d['meja'] ?></td>
 
-                        <!-- PEMBAYARAN -->
-                        <td><?= $d['pembayaran'] ?></td>
+                    <td><?= $d['pembayaran'] ?></td>
 
-                        <!-- TOTAL -->
-                        <td>
-                            <b class="text-success">
-                                Rp <?= number_format($d['total']) ?>
-                            </b>
-                        </td>
+                    <td>
 
-                        <!-- STATUS -->
-                        <td>
+                        <b class="text-success">
+                            Rp <?= number_format($d['total'],0,',','.') ?>
+                        </b>
 
-                            <?php if($status == 'pending'){ ?>
+                    </td>
 
-                                <span class="badge bg-warning text-dark p-2">
-                                    Pending
-                                </span>
+                    <td>
 
-                            <?php } elseif($status == 'diproses'){ ?>
+                        <?php if($status == 'pending'){ ?>
 
-                                <span class="badge bg-primary p-2">
-                                    Diproses
-                                </span>
+                            <span class="badge bg-warning text-dark p-2">
+                                Pending
+                            </span>
 
-                            <?php } elseif($status == 'selesai'){ ?>
+                        <?php } ?>
 
-                                <span class="badge bg-success p-2">
-                                    Selesai
-                                </span>
+                        <?php if($status == 'dibayar'){ ?>
 
-                            <?php } elseif($status == 'dibatalkan'){ ?>
+                            <span class="badge bg-success p-2">
+                                Dibayar
+                            </span>
 
-                                <span class="badge bg-danger p-2">
-                                    Dibatalkan
-                                </span>
+                        <?php } ?>
 
-                            <?php } ?>
+                        <?php if($status == 'diproses'){ ?>
 
-                        </td>
+                            <span class="badge bg-primary p-2">
+                                Diproses
+                            </span>
 
-                        <!-- AKSI -->
-                        <td>
+                        <?php } ?>
 
-                            <!-- DETAIL -->
-                            <a href="index.php?menu=detail_pesanan&id=<?= $d['id_pesanan'] ?>"
-                               class="btn btn-info btn-sm rounded-pill">
-                                Detail
+                        <?php if($status == 'selesai'){ ?>
+
+                            <span class="badge bg-dark p-2">
+                                Selesai
+                            </span>
+
+                        <?php } ?>
+
+                    </td>
+
+                    <td>
+
+                        <a href="index.php?menu=detail_pesanan&id=<?= $d['id_pesanan'] ?>"
+                           class="btn btn-info btn-sm rounded-pill">
+
+                            Detail
+
+                        </a>
+
+                        <?php if($status == 'dibayar'){ ?>
+
+                            <a href="update_status.php?id=<?= $d['id_pesanan'] ?>"
+                               class="btn btn-primary btn-sm rounded-pill"
+                               onclick="return confirm('Proses pesanan ini?')">
+
+                                🍳 Proses
+
                             </a>
 
-                            <!-- JIKA STATUS PENDING -->
-                            <?php if($status == 'pending'){ ?>
+                        <?php } ?>
 
-                                <!-- PROSES -->
-                                <a href="index.php?menu=konfirmasi_pembayaran&id=<?= $d['id_pesanan'] ?>"
-                                   class="btn btn-success btn-sm rounded-pill"
-                                   onclick="return confirm('Proses pesanan ini?')">
-                                    Proses
-                                </a>
+                        <?php if($status == 'diproses'){ ?>
 
-                            <?php } ?>
+                            <a href="struk.php?id=<?= $d['id_pesanan'] ?>"
+                               target="_blank"
+                               class="btn btn-dark btn-sm rounded-pill">
 
-                            <!-- JIKA STATUS DIPROSES -->
-                            <?php if($status == 'diproses'){ ?>
+                                🧾 Struk
 
-                                <!-- SELESAI -->
-                                <a href="selesai_pesanan.php?id=<?= $d['id_pesanan'] ?>"
-                                   class="btn btn-primary btn-sm rounded-pill"
-                                   onclick="return confirm('Selesaikan pesanan ini?')">
-                                    Selesai
-                                </a>
+                            </a>
 
-                            <?php } ?>
+                            <a href="update_status.php?id=<?= $d['id_pesanan'] ?>"
+                               class="btn btn-success btn-sm rounded-pill"
+                               onclick="return confirm('Pesanan sudah selesai diantar?')">
 
-                        </td>
+                                ✔ Selesai
 
-                    </tr>
+                            </a>
+
+                        <?php } ?>
+
+                    </td>
+
+                </tr>
 
                 <?php } ?>
 

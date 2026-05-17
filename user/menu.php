@@ -43,6 +43,10 @@ switch ($page) {
         include "struk.php";
         break;
 
+        case 'edit_profil':
+        include "edit_profil.php";
+        break;
+
     default:
         echo "<h4 class='text-center mt-5'>Halaman tidak ditemukan</h4>";
         break;

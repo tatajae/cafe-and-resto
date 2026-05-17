@@ -1,7 +1,8 @@
+<!-- pembayaran.php -->
+
 <?php
 include "../koneksi.php";
 
-/* CEK LOGIN ADMIN */
 if (!isset($_SESSION['login'])) {
     header("Location: ../login.php");
     exit;
@@ -12,7 +13,6 @@ if($_SESSION['role'] != 'admin'){
     exit;
 }
 
-/* AMBIL DATA PESANAN */
 $data = mysqli_query($conn,"
 SELECT * FROM pesanan
 ORDER BY id_pesanan DESC
@@ -22,6 +22,7 @@ ORDER BY id_pesanan DESC
 <!DOCTYPE html>
 <html>
 <head>
+
     <title>Verifikasi Pembayaran</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -66,15 +67,22 @@ ORDER BY id_pesanan DESC
             border-radius:10px;
         }
 
+        .badge-dibayar{
+            background:#198754;
+            color:white;
+            padding:8px 12px;
+            border-radius:10px;
+        }
+
         .badge-diproses{
-            background:#0dcaf0;
-            color:black;
+            background:#0d6efd;
+            color:white;
             padding:8px 12px;
             border-radius:10px;
         }
 
         .badge-selesai{
-            background:#198754;
+            background:#212529;
             color:white;
             padding:8px 12px;
             border-radius:10px;
@@ -98,6 +106,7 @@ ORDER BY id_pesanan DESC
         }
 
     </style>
+
 </head>
 
 <body>
@@ -112,7 +121,8 @@ ORDER BY id_pesanan DESC
                 ☕ Verifikasi Pembayaran
             </h3>
 
-            <a href="dashboard.php" class="btn btn-dark">
+            <a href="index.php?menu=dashboard"
+               class="btn btn-dark">
                 Kembali
             </a>
 
@@ -142,15 +152,17 @@ ORDER BY id_pesanan DESC
                 while($d = mysqli_fetch_assoc($data)){
 
                     $status = strtolower(trim($d['status']));
+
+                    if(empty($status)){
+                        $status = 'pending';
+                    }
                 ?>
 
                 <tr>
 
                     <td><?= $no++; ?></td>
 
-                    <td>
-                        <?= $d['nama_pemesan']; ?>
-                    </td>
+                    <td><?= $d['nama_pemesan']; ?></td>
 
                     <td>
                         <b>
@@ -158,11 +170,8 @@ ORDER BY id_pesanan DESC
                         </b>
                     </td>
 
-                    <td>
-                        <?= $d['pembayaran']; ?>
-                    </td>
+                    <td><?= $d['pembayaran']; ?></td>
 
-                    <!-- BUKTI -->
                     <td>
 
                         <?php if(!empty($d['bukti'])){ ?>
@@ -180,98 +189,71 @@ ORDER BY id_pesanan DESC
 
                     </td>
 
-                    <!-- STATUS -->
                     <td>
 
                         <?php if($status == 'pending'){ ?>
+                            <span class="badge-pending">Pending</span>
+                        <?php } ?>
 
-                            <span class="badge-pending">
-                                Pending
-                            </span>
-
+                        <?php if($status == 'dibayar'){ ?>
+                            <span class="badge-dibayar">Dibayar</span>
                         <?php } ?>
 
                         <?php if($status == 'diproses'){ ?>
-
-                            <span class="badge-diproses">
-                                Diproses
-                            </span>
-
+                            <span class="badge-diproses">Diproses</span>
                         <?php } ?>
 
                         <?php if($status == 'selesai'){ ?>
-
-                            <span class="badge-selesai">
-                                Selesai
-                            </span>
-
+                            <span class="badge-selesai">Selesai</span>
                         <?php } ?>
 
                         <?php if($status == 'dibatalkan'){ ?>
-
-                            <span class="badge-batal">
-                                Dibatalkan
-                            </span>
-
+                            <span class="badge-batal">Dibatalkan</span>
                         <?php } ?>
 
                     </td>
 
-                    <!-- AKSI -->
                     <td>
 
                         <?php if($status == 'pending'){ ?>
 
-                            <!-- CASH -->
-                            <?php if($d['pembayaran'] == 'Cash'){ ?>
+                            <a href="index.php?menu=konfirmasi_pembayaran&id=<?= $d['id_pesanan']; ?>"
+                               class="btn btn-cash btn-sm">
 
-                                <a href="konfirmasi_cash.php?id=<?= $d['id_pesanan']; ?>"
-                                   class="btn btn-cash btn-sm">
-                                    💵 Bayar Cash
-                                </a>
+                                ✔ Verifikasi
 
-                            <?php } else { ?>
+                            </a>
 
-                                <!-- E-WALLET / TRANSFER -->
-                                <a href="terima_pembayaran.php?id=<?= $d['id_pesanan']; ?>"
-                                   class="btn btn-transfer btn-sm"
-                                   onclick="return confirm('Terima pembayaran ini?')">
-                                    ✔ Terima
-                                </a>
-
-                            <?php } ?>
-
-                            <!-- TOLAK -->
                             <a href="tolak_pembayaran.php?id=<?= $d['id_pesanan']; ?>"
                                class="btn btn-danger btn-sm"
-                               onclick="return confirm('Yakin tolak pembayaran?')">
+                               onclick="return confirm('Tolak pembayaran ini?')">
+
                                 ✖ Tolak
+
                             </a>
+
+                        <?php } ?>
+
+                        <?php if($status == 'dibayar'){ ?>
+
+                            <span class="text-success fw-bold">
+                                Menunggu Diproses
+                            </span>
 
                         <?php } ?>
 
                         <?php if($status == 'diproses'){ ?>
 
-                            <a href="update_status.php?id=<?= $d['id_pesanan']; ?>&status=selesai"
-                               class="btn btn-success btn-sm"
-                               onclick="return confirm('Pesanan sudah selesai?')">
-                                ✔ Selesaikan
-                            </a>
+                            <span class="text-primary fw-bold">
+                                Pesanan Diproses
+                            </span>
 
                         <?php } ?>
 
                         <?php if($status == 'selesai'){ ?>
 
-                            <span class="text-success">
-                                Pesanan selesai
-                            </span>
-
-                        <?php } ?>
-
-                        <?php if($status == 'dibatalkan'){ ?>
-
-                            <span class="text-danger">
-                                Pembayaran ditolak
+                            <span class="text-success fw-bold">
+                                Pesanan Selesai
                             </span>
 
                         <?php } ?>

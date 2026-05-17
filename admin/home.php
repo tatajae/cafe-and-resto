@@ -117,7 +117,7 @@
             <tr>
                 <td><?= $b['nama'] ?></td>
                 <td>
-                    <img src="../bukti/<?= $b['bukti'] ?>" width="80">
+                    <img src="bukti/<?= $b['bukti'] ?>" width="80">
                 </td>
                 <td><?= $b['status'] ?></td>
             </tr>
