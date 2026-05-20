@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 09, 2026 at 04:33 AM
+-- Generation Time: May 20, 2026 at 07:12 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -40,8 +40,7 @@ CREATE TABLE `detail_pesanan` (
 --
 
 INSERT INTO `detail_pesanan` (`id_detail`, `id_pesanan`, `id_produk`, `jumlah`, `harga`) VALUES
-(31, 36, 7, 1, 40000),
-(32, 37, 4, 1, 25000);
+(38, 43, 13, 1, 28000);
 
 -- --------------------------------------------------------
 
@@ -96,13 +95,6 @@ CREATE TABLE `laporan` (
   `status` varchar(30) DEFAULT 'Berhasil'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `laporan`
---
-
-INSERT INTO `laporan` (`id_laporan`, `id_pesanan`, `nama_pemesan`, `total`, `metode`, `tanggal`, `uang_bayar`, `kembalian`, `status`) VALUES
-(2, 36, 'mall', 40000, 'Cash', '2026-05-09 08:50:53', 50000, 10000, 'Berhasil');
-
 -- --------------------------------------------------------
 
 --
@@ -127,7 +119,7 @@ CREATE TABLE `pembayaran` (
 --
 
 INSERT INTO `pembayaran` (`id`, `id_pesanan`, `metode`, `total`, `nama`, `bukti`, `status`, `tanggal`, `uang_bayar`, `kembalian`) VALUES
-(11, 36, 'Cash', 40000, NULL, NULL, 'Berhasil', '2026-05-09 01:50:53', 50000, 10000);
+(21, 43, 'Cash', 28000, NULL, NULL, 'Berhasil', '2026-05-18 03:13:35', 30000, 2000);
 
 -- --------------------------------------------------------
 
@@ -143,7 +135,7 @@ CREATE TABLE `pesanan` (
   `pembayaran` varchar(50) NOT NULL,
   `tanggal` datetime DEFAULT current_timestamp(),
   `total` int(11) NOT NULL,
-  `status` enum('pending','diproses','selesai','dibatalkan') DEFAULT 'pending'
+  `status` enum('pending','dibayar','diproses','selesai','dibatalkan') DEFAULT 'pending'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -151,8 +143,7 @@ CREATE TABLE `pesanan` (
 --
 
 INSERT INTO `pesanan` (`id_pesanan`, `id_user`, `nama_pemesan`, `meja`, `pembayaran`, `tanggal`, `total`, `status`) VALUES
-(36, 3, 'mall', '1', 'Cash', '2026-05-09 08:47:14', 40000, 'selesai'),
-(37, 3, 'titi', '4', 'Cash', '2026-05-09 09:26:29', 25000, '');
+(43, 3, 'caca', '1', 'Cash', '2026-05-18 10:13:07', 28000, 'selesai');
 
 -- --------------------------------------------------------
 
@@ -179,7 +170,16 @@ INSERT INTO `produk` (`id_produk`, `id_kategori`, `nama_produk`, `harga`, `gamba
 (8, 1, 'Americano', 20000, 'How To Make an Americano - Tastylicious.jfif'),
 (9, 2, 'Matcha', 15000, 'matcha.jfif'),
 (10, 3, 'Bakso', 20000, 'Bakso Kuah.jfif'),
-(11, 3, 'Mie Ayam', 15000, 'Mie Ayam Ratu.jfif');
+(11, 3, 'Mie Ayam', 15000, 'Mie Ayam Ratu.jfif'),
+(12, 4, 'CROSSAINT', 28000, 'download (24).jfif'),
+(13, 4, 'Nutella Tiramisu', 28000, 'Nutella Tiramisu.jfif'),
+(14, 4, 'Ice Cream', 20000, 'download (25).jfif'),
+(15, 4, 'Pudding Caramel', 42000, 'pudding caramel.jfif'),
+(16, 2, 'Matcha Latte', 28000, 'Creamy Matcha Latte Recipe.jfif'),
+(17, 2, 'Milkshake', 15000, 'Coffee Milkshake - Baking Mischief.jfif'),
+(18, 2, 'Strawberry Milkshake', 15000, 'Strawberry Milkshake.jfif'),
+(19, 3, 'Nasi Goreng', 38000, 'Nasi Goreng (Indonesian Fried Rice).jfif'),
+(20, 3, 'Ayam Bakar', 50000, 'Chic Outfit Ideas for Every Occasion 👗✨.jfif');
 
 -- --------------------------------------------------------
 
@@ -196,13 +196,6 @@ CREATE TABLE `reservasi` (
   `status` enum('menunggu','disetujui','ditolak') DEFAULT 'menunggu',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `reservasi`
---
-
-INSERT INTO `reservasi` (`id_reservasi`, `id_user`, `tanggal`, `jam`, `jumlah_orang`, `status`, `created_at`) VALUES
-(3, 3, '2026-05-09', '10:30:00', 4, 'disetujui', '2026-05-08 13:29:44');
 
 -- --------------------------------------------------------
 
@@ -294,7 +287,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `detail_pesanan`
 --
 ALTER TABLE `detail_pesanan`
-  MODIFY `id_detail` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+  MODIFY `id_detail` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
 -- AUTO_INCREMENT for table `kategori`
@@ -306,37 +299,37 @@ ALTER TABLE `kategori`
 -- AUTO_INCREMENT for table `keranjang`
 --
 ALTER TABLE `keranjang`
-  MODIFY `id_keranjang` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+  MODIFY `id_keranjang` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
 
 --
 -- AUTO_INCREMENT for table `laporan`
 --
 ALTER TABLE `laporan`
-  MODIFY `id_laporan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_laporan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `pembayaran`
 --
 ALTER TABLE `pembayaran`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `pesanan`
 --
 ALTER TABLE `pesanan`
-  MODIFY `id_pesanan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+  MODIFY `id_pesanan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
 
 --
 -- AUTO_INCREMENT for table `produk`
 --
 ALTER TABLE `produk`
-  MODIFY `id_produk` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id_produk` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `reservasi`
 --
 ALTER TABLE `reservasi`
-  MODIFY `id_reservasi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_reservasi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `users`
