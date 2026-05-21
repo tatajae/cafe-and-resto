@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 20, 2026 at 07:12 AM
+-- Generation Time: May 21, 2026 at 05:23 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -40,7 +40,8 @@ CREATE TABLE `detail_pesanan` (
 --
 
 INSERT INTO `detail_pesanan` (`id_detail`, `id_pesanan`, `id_produk`, `jumlah`, `harga`) VALUES
-(38, 43, 13, 1, 28000);
+(45, 50, 8, 1, 20000),
+(46, 51, 11, 1, 15000);
 
 -- --------------------------------------------------------
 
@@ -95,6 +96,14 @@ CREATE TABLE `laporan` (
   `status` varchar(30) DEFAULT 'Berhasil'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `laporan`
+--
+
+INSERT INTO `laporan` (`id_laporan`, `id_pesanan`, `nama_pemesan`, `total`, `metode`, `tanggal`, `uang_bayar`, `kembalian`, `status`) VALUES
+(10, 50, 'cici', 20000, 'DANA', '2026-05-21 10:15:25', 20000, 0, 'Berhasil'),
+(11, 51, 'jamal', 15000, 'Cash', '2026-05-21 10:20:00', 20000, 5000, 'Berhasil');
+
 -- --------------------------------------------------------
 
 --
@@ -119,7 +128,8 @@ CREATE TABLE `pembayaran` (
 --
 
 INSERT INTO `pembayaran` (`id`, `id_pesanan`, `metode`, `total`, `nama`, `bukti`, `status`, `tanggal`, `uang_bayar`, `kembalian`) VALUES
-(21, 43, 'Cash', 28000, NULL, NULL, 'Berhasil', '2026-05-18 03:13:35', 30000, 2000);
+(29, 50, 'DANA', 20000, 'cici', '1779333310_bukti.png', 'Berhasil', '2026-05-21 03:15:10', NULL, NULL),
+(30, 51, 'Cash', 15000, 'jamal', NULL, 'Berhasil', '2026-05-21 03:20:00', 20000, 5000);
 
 -- --------------------------------------------------------
 
@@ -143,7 +153,8 @@ CREATE TABLE `pesanan` (
 --
 
 INSERT INTO `pesanan` (`id_pesanan`, `id_user`, `nama_pemesan`, `meja`, `pembayaran`, `tanggal`, `total`, `status`) VALUES
-(43, 3, 'caca', '1', 'Cash', '2026-05-18 10:13:07', 28000, 'selesai');
+(50, 3, 'cici', '2', 'DANA', '2026-05-21 10:15:02', 20000, 'diproses'),
+(51, 3, 'jamal', '8', 'Cash', '2026-05-21 10:18:01', 15000, 'diproses');
 
 -- --------------------------------------------------------
 
@@ -287,7 +298,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `detail_pesanan`
 --
 ALTER TABLE `detail_pesanan`
-  MODIFY `id_detail` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+  MODIFY `id_detail` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
 
 --
 -- AUTO_INCREMENT for table `kategori`
@@ -299,25 +310,25 @@ ALTER TABLE `kategori`
 -- AUTO_INCREMENT for table `keranjang`
 --
 ALTER TABLE `keranjang`
-  MODIFY `id_keranjang` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
+  MODIFY `id_keranjang` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
 
 --
 -- AUTO_INCREMENT for table `laporan`
 --
 ALTER TABLE `laporan`
-  MODIFY `id_laporan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id_laporan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `pembayaran`
 --
 ALTER TABLE `pembayaran`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `pesanan`
 --
 ALTER TABLE `pesanan`
-  MODIFY `id_pesanan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
+  MODIFY `id_pesanan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
 
 --
 -- AUTO_INCREMENT for table `produk`
