@@ -107,13 +107,13 @@ Tempat nyaman untuk bersantai bersama teman dan keluarga.
 
 <li><a href="index.php">Dashboard</a></li>
 
-<li><a href="reservasi.php">Reservasi</a></li>
+<li><a href="index.php?menu=reservasi">Reservasi</a></li>
 
-<li><a href="produk.php">Produk</a></li>
+<li><a href="index.php?menu=produk">Produk</a></li>
 
-<li><a href="gallery.php">Gallery</a></li>
+<li><a href="index.php?menu=gallery">Gallery</a></li>
 
-<li><a href="contact.php">Contact</a></li>
+<li><a href="index.php?menu=contact">Contact</a></li>
 
 </ul>
 

@@ -14,8 +14,13 @@ if($_SESSION['role'] != 'admin'){
 }
 
 $data = mysqli_query($conn,"
-SELECT * FROM pesanan
-ORDER BY id_pesanan DESC
+SELECT 
+    pesanan.*,
+    pembayaran.bukti
+FROM pesanan
+LEFT JOIN pembayaran 
+ON pesanan.id_pesanan = pembayaran.id_pesanan
+ORDER BY pesanan.id_pesanan DESC
 ");
 ?>
 

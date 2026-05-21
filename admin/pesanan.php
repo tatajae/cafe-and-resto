@@ -133,7 +133,7 @@ include "../koneksi.php";
 
                         <?php if($status == 'diproses'){ ?>
 
-                            <a href="struk.php?id=<?= $d['id_pesanan'] ?>"
+                            <a href="index.php?menu=struk_print&id=<?= $d['id_pesanan'] ?>"
                                target="_blank"
                                class="btn btn-dark btn-sm rounded-pill">
 
