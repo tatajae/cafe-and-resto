@@ -111,10 +111,6 @@ Tempat nyaman untuk bersantai bersama teman dan keluarga.
 
 <li><a href="index.php?menu=produk">Produk</a></li>
 
-<li><a href="index.php?menu=gallery">Gallery</a></li>
-
-<li><a href="index.php?menu=contact">Contact</a></li>
-
 </ul>
 
 </div>
